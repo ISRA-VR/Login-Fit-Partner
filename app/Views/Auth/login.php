@@ -17,6 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="shortcut icon" href="app/Views/assets/img/logos/favi.png" type="image/x-icon">
     <link rel="stylesheet" href="app/Views/assets/css/login.css">
+    <link rel="stylesheet" href="app/Views/assets/css/loading.css">
 </head>
 <body>
     <div class="login-container">
@@ -32,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
         <img src="app/Views/assets/img/logos/logogym.png" alt="Fit Partner">
 
-        <h2>Bienvenido usuario<br>
+        <h2>Bienvenido a Fit Partner<br>
             <p>Inicia sesión para continuar</p>
         </h2>
 
-        <form action="index.php?view=login" method="POST">
+        <form id="login-form" action="index.php?view=login" method="POST">
 
             <label>Correo electrónico</label>
             <div class="input-group">
@@ -49,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="bi bi-eye-slash toggle-pass" id="togglePassword"></i>
             </div>
 
-            <button type="submit" class="btn-login">Ingresar</button>
+            <button type="submit" class="btn-login" id="btn-login">Ingresar</button>
             <br><br>
             <div class="links">
                 <p>¿Olvidaste tu contraseña? <a href="index.php?view=recover">Click aqui</a></p>
@@ -61,6 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div class="footer">© 2025 Fit Partner · Todos los derechos reservados</div>
+
+    <div id="loading-overlay" class="loading-overlay" aria-live="polite" aria-busy="true">
+        <div class="spinner"></div>
+        <p class="dots">Iniciando sesión</p>
+    </div>
 
     <script src="app/Views/assets/js/login.js"></script>
 

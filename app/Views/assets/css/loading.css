@@ -1,0 +1,58 @@
+/* Loading overlay shared styles (refinado) */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(1200px 800px at 50% 50%, rgba(0,0,0,0.65), rgba(0,0,0,0.85));
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 9999;
+  color: #fff;
+  text-align: center;
+}
+.loading-overlay.active { display: flex; }
+
+.spinner {
+  width: 64px;
+  height: 64px;
+  position: relative;
+}
+.spinner::before,
+.spinner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 4px solid transparent;
+}
+.spinner::before {
+  border-top-color: #00a8ff;
+  border-left-color: #00a8ff;
+  animation: spin 1s linear infinite;
+}
+.spinner::after {
+  border-bottom-color: #abe3ff;
+  border-right-color: #abe3ff;
+  animation: spinReverse 1.2s linear infinite;
+}
+
+.loading-overlay p {
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  opacity: 0.95;
+}
+
+.dots::after {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  animation: dots 1.2s steps(3, end) infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+@keyframes dots { 0% { content: "" } 33% { content: "." } 66% { content: ".." } 100% { content: "..." } }

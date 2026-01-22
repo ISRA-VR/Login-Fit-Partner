@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label>Contraseña</label>
             <div class="input-group">
-                <input type="password" id="password" name="password" placeholder="Crea una contraseña segura" required>
+                <input type="password" id="password" name="password" placeholder="Crea una contraseña" required>
                 <i class="bi bi-eye-slash toggle-pass" id="togglePassword"></i>
             </div>
 
