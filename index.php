@@ -1,5 +1,4 @@
 <?php
-// Configurar cookies de sesión seguras antes de iniciar la sesión
 $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
 if (function_exists('session_set_cookie_params')) {
     session_set_cookie_params([
@@ -14,7 +13,6 @@ if (function_exists('session_set_cookie_params')) {
 
 session_start();
 
-// Evitar caché globalmente para páginas dinámicas
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Pragma: no-cache");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
