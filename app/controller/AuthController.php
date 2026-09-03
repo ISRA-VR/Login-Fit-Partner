@@ -3,6 +3,27 @@ require_once __DIR__ . "/../models/User.php";
 
 class AuthController
 {
+    private function startSession()
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+    }
+
+    private function redirect($view, $error = null, $params = [])
+    {
+        $location = "index.php?view=" . rawurlencode($view);
+        if ($error !== null) {
+            $location .= "&error=" . rawurlencode($error);
+        }
+        foreach ($params as $key => $value) {
+            $location .= "&" . rawurlencode($key) . "=" . rawurlencode($value);
+        }
+
+        header("Location: " . $location);
+        exit;
+    }
+
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
@@ -11,14 +32,23 @@ class AuthController
         $age      = trim($_POST['age'] ?? '');
         $height   = trim($_POST['height'] ?? '');
         $weight   = trim($_POST['weight'] ?? '');
-        $email    = trim($_POST['email'] ?? '');
+        $email    = strtolower(trim($_POST['email'] ?? ''));
         $password = $_POST['password'] ?? '';
         $password2 = $_POST['password2'] ?? '';
         $errors = [];
 
-        if (strlen($age) > 2) $errors[] = "La edad no es válida.";
-        if (strlen($height) > 3) $errors[] = "La estatura no es válida.";
-        if (strlen($weight) > 3) $errors[] = "El peso no es válido.";
+        if ($name === '' || mb_strlen($name) < 2 || mb_strlen($name) > 100) {
+            $errors[] = "El nombre no es válido.";
+        }
+        if (!filter_var($age, FILTER_VALIDATE_INT, ['options' => ['min_range' => 13, 'max_range' => 120]])) {
+            $errors[] = "La edad no es válida.";
+        }
+        if (!filter_var($height, FILTER_VALIDATE_INT, ['options' => ['min_range' => 50, 'max_range' => 250]])) {
+            $errors[] = "La estatura no es válida.";
+        }
+        if (!filter_var($weight, FILTER_VALIDATE_INT, ['options' => ['min_range' => 20, 'max_range' => 400]])) {
+            $errors[] = "El peso no es válido.";
+        }
 
         $regexStrong = '/^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W_]).{8,}$/';
         if (!preg_match($regexStrong, $password)) {
@@ -29,21 +59,23 @@ class AuthController
             $errors[] = "Las contraseñas no coinciden.";
         }
 
+        if (empty($_POST['terms'])) {
+            $errors[] = "Debes aceptar los términos y condiciones.";
+        }
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "El correo electrónico no es válido.";
         }
 
         if (!empty($errors)) {
-            $errorText = urlencode(implode("<br>", $errors));
-            header("Location: index.php?view=register&error={$errorText}");
-            exit;
+            $this->redirect('register', implode("\n", $errors));
         }
 
-        $user = new User();
-        if ($user->emailExists($email)) {
-            header("Location: index.php?view=register&error=El correo ya está registrado.");
-            exit;
-        }
+        try {
+            $user = new User();
+            if ($user->emailExists($email)) {
+                $this->redirect('register', 'El correo ya está registrado.');
+            }
 
         $data = [
             'nombre'   => $name,
@@ -54,37 +86,45 @@ class AuthController
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ];
 
-        if ($user->register($data)) {
-            header("Location: index.php?view=login&msg=registered");
-            exit;
-        } else {
-            header("Location: index.php?view=register&error=Error al crear la cuenta.");
-            exit;
+            if ($user->register($data)) {
+                $this->redirect('login', null, ['msg' => 'registered']);
+            }
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
         }
+
+        $this->redirect('register', 'No fue posible crear la cuenta. Inténtalo nuevamente.');
     }
 
     public function login()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-        $email = trim($_POST['email'] ?? '');
+        $email = strtolower(trim($_POST['email'] ?? ''));
         $password = $_POST['password'] ?? '';
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            header("Location: index.php?view=login&error=Correo no válido");
-            exit;
+        $this->startSession();
+        $_SESSION['login_email'] = $email;
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
+            $this->redirect('login', 'Correo o contraseña no válidos.');
         }
 
-        $user = new User();
-        $result = $user->login($email);
+        try {
+            $user = new User();
+            $result = $user->login($email);
+        } catch (Throwable $exception) {
+            error_log($exception->getMessage());
+            $this->redirect('login', 'No fue posible iniciar sesión. Inténtalo nuevamente.');
+        }
 
         if ($result && password_verify($password, $result['password'])) {
 
-            session_start();
             // Regenerar ID de sesión para prevenir fijación de sesión
             if (function_exists('session_regenerate_id')) {
                 session_regenerate_id(true);
             }
+            unset($_SESSION['login_email']);
             $_SESSION['user'] = [
                 "id"      => $result['id'],
                 "nombre"  => $result['nombre'],
@@ -96,8 +136,7 @@ class AuthController
             header("Location: index.php?view=dashboard");
             exit;
         } else {
-            header("Location: index.php?view=login&error=Credenciales incorrectas");
-            exit;
+            $this->redirect('login', 'Credenciales incorrectas.');
         }
     }
 

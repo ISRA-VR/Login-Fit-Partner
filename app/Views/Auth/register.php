@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-container">
         <?php if (isset($_GET['error'])): ?>
             <div class="alert error">
-                <?= $_GET['error'] ?>
+                <?= nl2br(htmlspecialchars($_GET['error'], ENT_QUOTES, 'UTF-8')) ?>
             </div>
         <?php endif; ?>
 

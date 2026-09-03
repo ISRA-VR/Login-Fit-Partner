@@ -12,7 +12,7 @@ class Database {
 
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->dbname,
+                "mysql:host=" . $this->host . ";dbname=" . $this->dbname . ";charset=utf8mb4",
                 $this->username,
                 $this->password
             );
@@ -20,7 +20,8 @@ class Database {
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch (PDOException $e) {
-            echo "Error de conexión: " . $e->getMessage();
+            error_log($e->getMessage());
+            throw new RuntimeException('No fue posible conectar con la base de datos.', 0, $e);
         }
 
         return $this->conn;

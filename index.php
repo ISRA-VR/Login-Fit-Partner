@@ -11,6 +11,10 @@ if (function_exists('session_set_cookie_params')) {
     ]);
 }
 
+// Credenciales de prueba
+// israelvaler65@gmail.com
+// israX0406-
+
 session_start();
 
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");

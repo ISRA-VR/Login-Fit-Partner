@@ -42,8 +42,8 @@ class User
 
     public function emailExists($email)
     {
-        $query = $this->conn->prepare("SELECT id FROM users WHERE email = ?");
-        $query->execute([$email]);
+        $query = $this->conn->prepare("SELECT id FROM " . $this->table . " WHERE email = :email LIMIT 1");
+        $query->execute(['email' => $email]);
         return $query->fetch(PDO::FETCH_ASSOC);
     }
 }

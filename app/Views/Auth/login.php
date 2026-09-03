@@ -1,6 +1,14 @@
 <?php
 require_once __DIR__ . "/../../../app/controller/AuthController.php";
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+$loginEmail = $_SESSION['login_email'] ?? '';
+unset($_SESSION['login_email']);
+$errorMessage = $_GET['error'] ?? '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $auth = new AuthController();
     $auth->login();
@@ -23,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="login-container">
         <?php if (isset($_GET['error'])): ?>
             <div class="alert error">
-                <?= $_GET['error'] ?>
+                <?= nl2br(htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8')) ?>
             </div>
         <?php endif; ?>
         <?php if (isset($_GET['msg']) && $_GET['msg'] === 'registered'): ?>
@@ -41,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <label>Correo electrónico</label>
             <div class="input-group">
-                <input type="email" name="email" placeholder="nombre@ejemplo.com" required>
+                <input type="email" name="email" placeholder="nombre@ejemplo.com" value="<?= htmlspecialchars($loginEmail, ENT_QUOTES, 'UTF-8') ?>" required>
             </div>
 
             <label>Contraseña</label>
