@@ -1,13 +1,6 @@
-# 💪 Fit Partner
+# 💪 Fit Partner - Login
 
-Es una aplicación web diseñada para fomentar el ejercicio y la alimentación saludable. Está enfocada en la comunidad juvenil y busca promover un estilo de vida activo y equilibrado.
-
-La plataforma ofrece información clara y útil sobre rutinas de entrenamiento, tanto para realizar en casa como en un gimnasio. Además, incluye planes alimenticios elaborados por nutriólogos profesionales.
-
-Cuenta también con una herramienta de IMC (Índice de Masa Corporal), la cual permite identificar si una persona presenta bajo peso, peso normal, sobrepeso u obesidad. El cálculo se realiza utilizando el peso en kilogramos dividido entre el cuadrado de la estatura en metros.
-
-Finalmente, la aplicación integra un formulario donde los usuarios pueden enviar sugerencias, opiniones o quejas para mejorar continuamente la experiencia en la plataforma.
-**Con el tiempo, se haran actualizaciones del proyecto...**
+Es un login con registro y recuperar la contraseña, especialmente para un gimnasio, lo puedes implementar para tu tienda fitness, muy eficiente y rapido.
 
 ---
 
